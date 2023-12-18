@@ -1,4 +1,4 @@
-module github.com/casbin/casbin/v2
+module github.com/anzimu/casbin/v2
 
 require (
 	github.com/casbin/govaluate v1.1.0
