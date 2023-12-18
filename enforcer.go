@@ -21,14 +21,14 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/casbin/casbin/v2/effector"
-	"github.com/casbin/casbin/v2/log"
-	"github.com/casbin/casbin/v2/model"
-	"github.com/casbin/casbin/v2/persist"
-	fileadapter "github.com/casbin/casbin/v2/persist/file-adapter"
-	"github.com/casbin/casbin/v2/rbac"
-	defaultrolemanager "github.com/casbin/casbin/v2/rbac/default-role-manager"
-	"github.com/casbin/casbin/v2/util"
+	"github.com/anzimu/casbin/v2/effector"
+	"github.com/anzimu/casbin/v2/log"
+	"github.com/anzimu/casbin/v2/model"
+	"github.com/anzimu/casbin/v2/persist"
+	fileadapter "github.com/anzimu/casbin/v2/persist/file-adapter"
+	"github.com/anzimu/casbin/v2/rbac"
+	defaultrolemanager "github.com/anzimu/casbin/v2/rbac/default-role-manager"
+	"github.com/anzimu/casbin/v2/util"
 
 	"github.com/casbin/govaluate"
 )

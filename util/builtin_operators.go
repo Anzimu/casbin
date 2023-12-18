@@ -24,7 +24,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/casbin/casbin/v2/rbac"
+	"github.com/anzimu/casbin/v2/rbac"
 
 	"github.com/casbin/govaluate"
 )

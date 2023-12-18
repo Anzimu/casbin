@@ -17,9 +17,9 @@ package casbin
 import (
 	"fmt"
 
-	Err "github.com/casbin/casbin/v2/errors"
-	"github.com/casbin/casbin/v2/model"
-	"github.com/casbin/casbin/v2/persist"
+	Err "github.com/anzimu/casbin/v2/errors"
+	"github.com/anzimu/casbin/v2/model"
+	"github.com/anzimu/casbin/v2/persist"
 )
 
 const (

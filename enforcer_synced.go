@@ -21,9 +21,9 @@ import (
 
 	"github.com/casbin/govaluate"
 
-	"github.com/casbin/casbin/v2/persist"
-	"github.com/casbin/casbin/v2/rbac"
-	defaultrolemanager "github.com/casbin/casbin/v2/rbac/default-role-manager"
+	"github.com/anzimu/casbin/v2/persist"
+	"github.com/anzimu/casbin/v2/rbac"
+	defaultrolemanager "github.com/anzimu/casbin/v2/rbac/default-role-manager"
 )
 
 // SyncedEnforcer wraps Enforcer and provides synchronized access

@@ -19,9 +19,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/casbin/casbin/v2/constant"
-	"github.com/casbin/casbin/v2/rbac"
-	"github.com/casbin/casbin/v2/util"
+	"github.com/anzimu/casbin/v2/constant"
+	"github.com/anzimu/casbin/v2/rbac"
+	"github.com/anzimu/casbin/v2/util"
 )
 
 type (

@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/casbin/casbin/v2/util"
+	"github.com/anzimu/casbin/v2/util"
 	"github.com/casbin/govaluate"
 )
 

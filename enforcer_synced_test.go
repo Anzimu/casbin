@@ -15,8 +15,8 @@
 package casbin
 
 import (
-	"github.com/casbin/casbin/v2/errors"
-	"github.com/casbin/casbin/v2/util"
+	"github.com/anzimu/casbin/v2/errors"
+	"github.com/anzimu/casbin/v2/util"
 	"sort"
 	"testing"
 	"time"

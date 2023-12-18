@@ -20,8 +20,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/casbin/casbin/v2/config"
-	"github.com/casbin/casbin/v2/constant"
+	"github.com/anzimu/casbin/v2/config"
+	"github.com/anzimu/casbin/v2/constant"
 )
 
 var (
