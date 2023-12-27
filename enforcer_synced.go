@@ -680,3 +680,51 @@ func (e *SyncedEnforcer) SelfUpdatePolicies(sec string, ptype string, oldRules, 
 	defer e.m.Unlock()
 	return e.Enforcer.SelfUpdatePolicies(sec, ptype, oldRules, newRules)
 }
+
+func (e *SyncedEnforcer) SelfAddPolicyModel(sec string, ptype string, rule []string) (bool, error) {
+	e.m.Lock()
+	defer e.m.Unlock()
+	return e.Enforcer.SelfAddPolicyModel(sec, ptype, rule)
+}
+
+func (e *SyncedEnforcer) SelfAddPoliciesModel(sec string, ptype string, rules [][]string) (bool, error) {
+	e.m.Lock()
+	defer e.m.Unlock()
+	return e.Enforcer.SelfAddPoliciesModel(sec, ptype, rules)
+}
+
+func (e *SyncedEnforcer) SelfAddPoliciesExModel(sec string, ptype string, rules [][]string) (bool, error) {
+	e.m.Lock()
+	defer e.m.Unlock()
+	return e.Enforcer.SelfAddPoliciesExModel(sec, ptype, rules)
+}
+
+func (e *SyncedEnforcer) SelfRemovePolicyModel(sec string, ptype string, rule []string) (bool, error) {
+	e.m.Lock()
+	defer e.m.Unlock()
+	return e.Enforcer.SelfRemovePolicyModel(sec, ptype, rule)
+}
+
+func (e *SyncedEnforcer) SelfRemovePoliciesModel(sec string, ptype string, rules [][]string) (bool, error) {
+	e.m.Lock()
+	defer e.m.Unlock()
+	return e.Enforcer.SelfRemovePoliciesModel(sec, ptype, rules)
+}
+
+func (e *SyncedEnforcer) SelfRemoveFilteredPolicyModel(sec string, ptype string, fieldIndex int, fieldValues ...string) (bool, error) {
+	e.m.Lock()
+	defer e.m.Unlock()
+	return e.Enforcer.SelfRemoveFilteredPolicyModel(sec, ptype, fieldIndex, fieldValues...)
+}
+
+func (e *SyncedEnforcer) SelfUpdatePolicyModel(sec string, ptype string, oldRule, newRule []string) (bool, error) {
+	e.m.Lock()
+	defer e.m.Unlock()
+	return e.Enforcer.SelfUpdatePolicyModel(sec, ptype, oldRule, newRule)
+}
+
+func (e *SyncedEnforcer) SelfUpdatePoliciesModel(sec string, ptype string, oldRules, newRules [][]string) (bool, error) {
+	e.m.Lock()
+	defer e.m.Unlock()
+	return e.Enforcer.SelfUpdatePoliciesModel(sec, ptype, oldRules, newRules)
+}

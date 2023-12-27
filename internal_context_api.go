@@ -1,41 +1,15 @@
-// Copyright 2017 The casbin Authors. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package casbin
 
 import (
+	"context"
 	"fmt"
-
 	Err "github.com/anzimu/casbin/v2/errors"
 	"github.com/anzimu/casbin/v2/model"
 	"github.com/anzimu/casbin/v2/persist"
 )
 
-const (
-	notImplemented = "not implemented"
-)
-
-func (e *Enforcer) shouldPersist() bool {
-	return e.adapter != nil && e.autoSave
-}
-
-func (e *Enforcer) shouldNotify() bool {
-	return e.watcher != nil && e.autoNotifyWatcher
-}
-
-// addPolicy adds a rule to the current policy.
-func (e *Enforcer) addPolicyWithoutNotify(sec string, ptype string, rule []string, isNeedAdapter bool) (bool, error) {
+// addPolicyWithoutNotifyCtx adds a rule to the current policy.
+func (e *Enforcer) addPolicyWithoutNotifyCtx(ctx context.Context, sec string, ptype string, rule []string) (bool, error) {
 	if e.dispatcher != nil && e.autoNotifyDispatcher {
 		return true, e.dispatcher.AddPolicies(sec, ptype, [][]string{rule})
 	}
@@ -44,8 +18,8 @@ func (e *Enforcer) addPolicyWithoutNotify(sec string, ptype string, rule []strin
 		return false, nil
 	}
 
-	if isNeedAdapter && e.shouldPersist() {
-		if err := e.adapter.AddPolicy(sec, ptype, rule); err != nil {
+	if e.shouldPersist() {
+		if err := e.adapter.(persist.ContextAdapter).AddPolicyCtx(ctx, sec, ptype, rule); err != nil {
 			if err.Error() != notImplemented {
 				return false, err
 			}
@@ -64,10 +38,10 @@ func (e *Enforcer) addPolicyWithoutNotify(sec string, ptype string, rule []strin
 	return true, nil
 }
 
-// addPoliciesWithoutNotify adds rules to the current policy without notify
+// addPoliciesWithoutNotifyCtx adds rules to the current policy without notify
 // If autoRemoveRepeat == true, existing rules are automatically filtered
 // Otherwise, false is returned directly
-func (e *Enforcer) addPoliciesWithoutNotify(sec string, ptype string, rules [][]string, autoRemoveRepeat bool, isNeedAdapter bool) (bool, error) {
+func (e *Enforcer) addPoliciesWithoutNotifyCtx(ctx context.Context, sec string, ptype string, rules [][]string, autoRemoveRepeat bool) (bool, error) {
 	if e.dispatcher != nil && e.autoNotifyDispatcher {
 		return true, e.dispatcher.AddPolicies(sec, ptype, rules)
 	}
@@ -76,8 +50,8 @@ func (e *Enforcer) addPoliciesWithoutNotify(sec string, ptype string, rules [][]
 		return false, nil
 	}
 
-	if isNeedAdapter && e.shouldPersist() {
-		if err := e.adapter.(persist.BatchAdapter).AddPolicies(sec, ptype, rules); err != nil {
+	if e.shouldPersist() {
+		if err := e.adapter.(persist.BatchContextAdapter).AddPoliciesCtx(ctx, sec, ptype, rules); err != nil {
 			if err.Error() != notImplemented {
 				return false, err
 			}
@@ -101,14 +75,14 @@ func (e *Enforcer) addPoliciesWithoutNotify(sec string, ptype string, rules [][]
 	return true, nil
 }
 
-// removePolicy removes a rule from the current policy.
-func (e *Enforcer) removePolicyWithoutNotify(sec string, ptype string, rule []string, isNeedAdapter bool) (bool, error) {
+// removePolicyWithoutNotifyCtx removes a rule from the current policy.
+func (e *Enforcer) removePolicyWithoutNotifyCtx(ctx context.Context, sec string, ptype string, rule []string) (bool, error) {
 	if e.dispatcher != nil && e.autoNotifyDispatcher {
 		return true, e.dispatcher.RemovePolicies(sec, ptype, [][]string{rule})
 	}
 
-	if isNeedAdapter && e.shouldPersist() {
-		if err := e.adapter.RemovePolicy(sec, ptype, rule); err != nil {
+	if e.shouldPersist() {
+		if err := e.adapter.(persist.ContextAdapter).RemovePolicyCtx(ctx, sec, ptype, rule); err != nil {
 			if err.Error() != notImplemented {
 				return false, err
 			}
@@ -130,13 +104,13 @@ func (e *Enforcer) removePolicyWithoutNotify(sec string, ptype string, rule []st
 	return ruleRemoved, nil
 }
 
-func (e *Enforcer) updatePolicyWithoutNotify(sec string, ptype string, oldRule []string, newRule []string, isNeedAdapter bool) (bool, error) {
+func (e *Enforcer) updatePolicyWithoutNotifyCtx(ctx context.Context, sec string, ptype string, oldRule []string, newRule []string) (bool, error) {
 	if e.dispatcher != nil && e.autoNotifyDispatcher {
 		return true, e.dispatcher.UpdatePolicy(sec, ptype, oldRule, newRule)
 	}
 
-	if isNeedAdapter && e.shouldPersist() {
-		if err := e.adapter.(persist.UpdatableAdapter).UpdatePolicy(sec, ptype, oldRule, newRule); err != nil {
+	if e.shouldPersist() {
+		if err := e.adapter.(persist.UpdatableContextAdapter).UpdatePolicyCtx(ctx, sec, ptype, oldRule, newRule); err != nil {
 			if err.Error() != notImplemented {
 				return false, err
 			}
@@ -161,7 +135,7 @@ func (e *Enforcer) updatePolicyWithoutNotify(sec string, ptype string, oldRule [
 	return ruleUpdated, nil
 }
 
-func (e *Enforcer) updatePoliciesWithoutNotify(sec string, ptype string, oldRules [][]string, newRules [][]string, isNeedAdapter bool) (bool, error) {
+func (e *Enforcer) updatePoliciesWithoutNotifyCtx(ctx context.Context, sec string, ptype string, oldRules [][]string, newRules [][]string) (bool, error) {
 	if len(newRules) != len(oldRules) {
 		return false, fmt.Errorf("the length of oldRules should be equal to the length of newRules, but got the length of oldRules is %d, the length of newRules is %d", len(oldRules), len(newRules))
 	}
@@ -170,8 +144,8 @@ func (e *Enforcer) updatePoliciesWithoutNotify(sec string, ptype string, oldRule
 		return true, e.dispatcher.UpdatePolicies(sec, ptype, oldRules, newRules)
 	}
 
-	if isNeedAdapter && e.shouldPersist() {
-		if err := e.adapter.(persist.UpdatableAdapter).UpdatePolicies(sec, ptype, oldRules, newRules); err != nil {
+	if e.shouldPersist() {
+		if err := e.adapter.(persist.UpdatableContextAdapter).UpdatePoliciesCtx(ctx, sec, ptype, oldRules, newRules); err != nil {
 			if err.Error() != notImplemented {
 				return false, err
 			}
@@ -198,7 +172,7 @@ func (e *Enforcer) updatePoliciesWithoutNotify(sec string, ptype string, oldRule
 }
 
 // removePolicies removes rules from the current policy.
-func (e *Enforcer) removePoliciesWithoutNotify(sec string, ptype string, rules [][]string, isNeedAdapter bool) (bool, error) {
+func (e *Enforcer) removePoliciesWithoutNotifyCtx(ctx context.Context, sec string, ptype string, rules [][]string) (bool, error) {
 	if !e.model.HasPolicies(sec, ptype, rules) {
 		return false, nil
 	}
@@ -207,8 +181,8 @@ func (e *Enforcer) removePoliciesWithoutNotify(sec string, ptype string, rules [
 		return true, e.dispatcher.RemovePolicies(sec, ptype, rules)
 	}
 
-	if isNeedAdapter && e.shouldPersist() {
-		if err := e.adapter.(persist.BatchAdapter).RemovePolicies(sec, ptype, rules); err != nil {
+	if e.shouldPersist() {
+		if err := e.adapter.(persist.BatchContextAdapter).RemovePoliciesCtx(ctx, sec, ptype, rules); err != nil {
 			if err.Error() != notImplemented {
 				return false, err
 			}
@@ -230,7 +204,7 @@ func (e *Enforcer) removePoliciesWithoutNotify(sec string, ptype string, rules [
 }
 
 // removeFilteredPolicy removes rules based on field filters from the current policy.
-func (e *Enforcer) removeFilteredPolicyWithoutNotify(sec string, ptype string, fieldIndex int, fieldValues []string, isNeedAdapter bool) (bool, error) {
+func (e *Enforcer) removeFilteredPolicyWithoutNotifyCtx(ctx context.Context, sec string, ptype string, fieldIndex int, fieldValues []string) (bool, error) {
 	if len(fieldValues) == 0 {
 		return false, Err.ErrInvalidFieldValuesParameter
 	}
@@ -239,8 +213,8 @@ func (e *Enforcer) removeFilteredPolicyWithoutNotify(sec string, ptype string, f
 		return true, e.dispatcher.RemoveFilteredPolicy(sec, ptype, fieldIndex, fieldValues...)
 	}
 
-	if isNeedAdapter && e.shouldPersist() {
-		if err := e.adapter.RemoveFilteredPolicy(sec, ptype, fieldIndex, fieldValues...); err != nil {
+	if e.shouldPersist() {
+		if err := e.adapter.(persist.ContextAdapter).RemoveFilteredPolicyCtx(ctx, sec, ptype, fieldIndex, fieldValues...); err != nil {
 			if err.Error() != notImplemented {
 				return false, err
 			}
@@ -262,14 +236,14 @@ func (e *Enforcer) removeFilteredPolicyWithoutNotify(sec string, ptype string, f
 	return ruleRemoved, nil
 }
 
-func (e *Enforcer) updateFilteredPoliciesWithoutNotify(sec string, ptype string, newRules [][]string, isNeedAdapter bool, fieldIndex int, fieldValues ...string) ([][]string, error) {
+func (e *Enforcer) updateFilteredPoliciesWithoutNotifyCtx(ctx context.Context, sec string, ptype string, newRules [][]string, fieldIndex int, fieldValues ...string) ([][]string, error) {
 	var (
 		oldRules [][]string
 		err      error
 	)
 
-	if isNeedAdapter && e.shouldPersist() {
-		if oldRules, err = e.adapter.(persist.UpdatableAdapter).UpdateFilteredPolicies(sec, ptype, newRules, fieldIndex, fieldValues...); err != nil {
+	if e.shouldPersist() {
+		if oldRules, err = e.adapter.(persist.UpdatableContextAdapter).UpdateFilteredPoliciesCtx(ctx, sec, ptype, newRules, fieldIndex, fieldValues...); err != nil {
 			if err.Error() != notImplemented {
 				return nil, err
 			}
@@ -307,9 +281,9 @@ func (e *Enforcer) updateFilteredPoliciesWithoutNotify(sec string, ptype string,
 	return oldRules, nil
 }
 
-// addPolicy adds a rule to the current policy.
-func (e *Enforcer) addPolicy(sec string, ptype string, rule []string) (bool, error) {
-	ok, err := e.addPolicyWithoutNotify(sec, ptype, rule, true)
+// addPolicyCtx adds a rule to the current policy.
+func (e *Enforcer) addPolicyCtx(ctx context.Context, sec string, ptype string, rule []string) (bool, error) {
+	ok, err := e.addPolicyWithoutNotifyCtx(ctx, sec, ptype, rule)
 	if !ok || err != nil {
 		return ok, err
 	}
@@ -327,11 +301,11 @@ func (e *Enforcer) addPolicy(sec string, ptype string, rule []string) (bool, err
 	return true, nil
 }
 
-// addPolicies adds rules to the current policy.
+// addPoliciesCtx adds rules to the current policy.
 // If autoRemoveRepeat == true, existing rules are automatically filtered
 // Otherwise, false is returned directly
-func (e *Enforcer) addPolicies(sec string, ptype string, rules [][]string, autoRemoveRepeat bool) (bool, error) {
-	ok, err := e.addPoliciesWithoutNotify(sec, ptype, rules, autoRemoveRepeat, true)
+func (e *Enforcer) addPoliciesCtx(ctx context.Context, sec string, ptype string, rules [][]string, autoRemoveRepeat bool) (bool, error) {
+	ok, err := e.addPoliciesWithoutNotifyCtx(ctx, sec, ptype, rules, autoRemoveRepeat)
 	if !ok || err != nil {
 		return ok, err
 	}
@@ -349,9 +323,9 @@ func (e *Enforcer) addPolicies(sec string, ptype string, rules [][]string, autoR
 	return true, nil
 }
 
-// removePolicy removes a rule from the current policy.
-func (e *Enforcer) removePolicy(sec string, ptype string, rule []string) (bool, error) {
-	ok, err := e.removePolicyWithoutNotify(sec, ptype, rule, true)
+// removePolicyCtx removes a rule from the current policy.
+func (e *Enforcer) removePolicyCtx(ctx context.Context, sec string, ptype string, rule []string) (bool, error) {
+	ok, err := e.removePolicyWithoutNotifyCtx(ctx, sec, ptype, rule)
 	if !ok || err != nil {
 		return ok, err
 	}
@@ -370,8 +344,8 @@ func (e *Enforcer) removePolicy(sec string, ptype string, rule []string) (bool, 
 	return true, nil
 }
 
-func (e *Enforcer) updatePolicy(sec string, ptype string, oldRule []string, newRule []string) (bool, error) {
-	ok, err := e.updatePolicyWithoutNotify(sec, ptype, oldRule, newRule, true)
+func (e *Enforcer) updatePolicyCtx(ctx context.Context, sec string, ptype string, oldRule []string, newRule []string) (bool, error) {
+	ok, err := e.updatePolicyWithoutNotifyCtx(ctx, sec, ptype, oldRule, newRule)
 	if !ok || err != nil {
 		return ok, err
 	}
@@ -389,8 +363,8 @@ func (e *Enforcer) updatePolicy(sec string, ptype string, oldRule []string, newR
 	return true, nil
 }
 
-func (e *Enforcer) updatePolicies(sec string, ptype string, oldRules [][]string, newRules [][]string) (bool, error) {
-	ok, err := e.updatePoliciesWithoutNotify(sec, ptype, oldRules, newRules, true)
+func (e *Enforcer) updatePoliciesCtx(ctx context.Context, sec string, ptype string, oldRules [][]string, newRules [][]string) (bool, error) {
+	ok, err := e.updatePoliciesWithoutNotifyCtx(ctx, sec, ptype, oldRules, newRules)
 	if !ok || err != nil {
 		return ok, err
 	}
@@ -408,9 +382,9 @@ func (e *Enforcer) updatePolicies(sec string, ptype string, oldRules [][]string,
 	return true, nil
 }
 
-// removePolicies removes rules from the current policy.
-func (e *Enforcer) removePolicies(sec string, ptype string, rules [][]string) (bool, error) {
-	ok, err := e.removePoliciesWithoutNotify(sec, ptype, rules, true)
+// removePoliciesCtx removes rules from the current policy.
+func (e *Enforcer) removePoliciesCtx(ctx context.Context, sec string, ptype string, rules [][]string) (bool, error) {
+	ok, err := e.removePoliciesWithoutNotifyCtx(ctx, sec, ptype, rules)
 	if !ok || err != nil {
 		return ok, err
 	}
@@ -428,9 +402,9 @@ func (e *Enforcer) removePolicies(sec string, ptype string, rules [][]string) (b
 	return true, nil
 }
 
-// removeFilteredPolicy removes rules based on field filters from the current policy.
-func (e *Enforcer) removeFilteredPolicy(sec string, ptype string, fieldIndex int, fieldValues []string) (bool, error) {
-	ok, err := e.removeFilteredPolicyWithoutNotify(sec, ptype, fieldIndex, fieldValues, true)
+// removeFilteredPolicyCtx removes rules based on field filters from the current policy.
+func (e *Enforcer) removeFilteredPolicyCtx(ctx context.Context, sec string, ptype string, fieldIndex int, fieldValues []string) (bool, error) {
+	ok, err := e.removeFilteredPolicyWithoutNotifyCtx(ctx, sec, ptype, fieldIndex, fieldValues)
 	if !ok || err != nil {
 		return ok, err
 	}
@@ -448,8 +422,8 @@ func (e *Enforcer) removeFilteredPolicy(sec string, ptype string, fieldIndex int
 	return true, nil
 }
 
-func (e *Enforcer) updateFilteredPolicies(sec string, ptype string, newRules [][]string, fieldIndex int, fieldValues ...string) (bool, error) {
-	oldRules, err := e.updateFilteredPoliciesWithoutNotify(sec, ptype, newRules, true, fieldIndex, fieldValues...)
+func (e *Enforcer) updateFilteredPoliciesCtx(ctx context.Context, sec string, ptype string, newRules [][]string, fieldIndex int, fieldValues ...string) (bool, error) {
+	oldRules, err := e.updateFilteredPoliciesWithoutNotifyCtx(ctx, sec, ptype, newRules, fieldIndex, fieldValues...)
 	ok := len(oldRules) != 0
 	if !ok || err != nil {
 		return ok, err
@@ -466,13 +440,4 @@ func (e *Enforcer) updateFilteredPolicies(sec string, ptype string, newRules [][
 	}
 
 	return true, nil
-}
-
-func (e *Enforcer) GetFieldIndex(ptype string, field string) (int, error) {
-	return e.model.GetFieldIndex(ptype, field)
-}
-
-func (e *Enforcer) SetFieldIndex(ptype string, field string, index int) {
-	assertion := e.model["p"][ptype]
-	assertion.FieldIndexMap[field] = index
 }

@@ -448,33 +448,65 @@ func (e *Enforcer) AddFunction(name string, function govaluate.ExpressionFunctio
 }
 
 func (e *Enforcer) SelfAddPolicy(sec string, ptype string, rule []string) (bool, error) {
-	return e.addPolicyWithoutNotify(sec, ptype, rule)
+	return e.addPolicyWithoutNotify(sec, ptype, rule, true)
 }
 
 func (e *Enforcer) SelfAddPolicies(sec string, ptype string, rules [][]string) (bool, error) {
-	return e.addPoliciesWithoutNotify(sec, ptype, rules, false)
+	return e.addPoliciesWithoutNotify(sec, ptype, rules, false, true)
 }
 
 func (e *Enforcer) SelfAddPoliciesEx(sec string, ptype string, rules [][]string) (bool, error) {
-	return e.addPoliciesWithoutNotify(sec, ptype, rules, true)
+	return e.addPoliciesWithoutNotify(sec, ptype, rules, true, true)
 }
 
 func (e *Enforcer) SelfRemovePolicy(sec string, ptype string, rule []string) (bool, error) {
-	return e.removePolicyWithoutNotify(sec, ptype, rule)
+	return e.removePolicyWithoutNotify(sec, ptype, rule, true)
 }
 
 func (e *Enforcer) SelfRemovePolicies(sec string, ptype string, rules [][]string) (bool, error) {
-	return e.removePoliciesWithoutNotify(sec, ptype, rules)
+	return e.removePoliciesWithoutNotify(sec, ptype, rules, true)
 }
 
 func (e *Enforcer) SelfRemoveFilteredPolicy(sec string, ptype string, fieldIndex int, fieldValues ...string) (bool, error) {
-	return e.removeFilteredPolicyWithoutNotify(sec, ptype, fieldIndex, fieldValues)
+	return e.removeFilteredPolicyWithoutNotify(sec, ptype, fieldIndex, fieldValues, true)
 }
 
 func (e *Enforcer) SelfUpdatePolicy(sec string, ptype string, oldRule, newRule []string) (bool, error) {
-	return e.updatePolicyWithoutNotify(sec, ptype, oldRule, newRule)
+	return e.updatePolicyWithoutNotify(sec, ptype, oldRule, newRule, true)
 }
 
 func (e *Enforcer) SelfUpdatePolicies(sec string, ptype string, oldRules, newRules [][]string) (bool, error) {
-	return e.updatePoliciesWithoutNotify(sec, ptype, oldRules, newRules)
+	return e.updatePoliciesWithoutNotify(sec, ptype, oldRules, newRules, true)
+}
+
+func (e *Enforcer) SelfAddPolicyModel(sec string, ptype string, rule []string) (bool, error) {
+	return e.addPolicyWithoutNotify(sec, ptype, rule, false)
+}
+
+func (e *Enforcer) SelfAddPoliciesModel(sec string, ptype string, rules [][]string) (bool, error) {
+	return e.addPoliciesWithoutNotify(sec, ptype, rules, false, false)
+}
+
+func (e *Enforcer) SelfAddPoliciesExModel(sec string, ptype string, rules [][]string) (bool, error) {
+	return e.addPoliciesWithoutNotify(sec, ptype, rules, true, false)
+}
+
+func (e *Enforcer) SelfRemovePolicyModel(sec string, ptype string, rule []string) (bool, error) {
+	return e.removePolicyWithoutNotify(sec, ptype, rule, false)
+}
+
+func (e *Enforcer) SelfRemovePoliciesModel(sec string, ptype string, rules [][]string) (bool, error) {
+	return e.removePoliciesWithoutNotify(sec, ptype, rules, false)
+}
+
+func (e *Enforcer) SelfRemoveFilteredPolicyModel(sec string, ptype string, fieldIndex int, fieldValues ...string) (bool, error) {
+	return e.removeFilteredPolicyWithoutNotify(sec, ptype, fieldIndex, fieldValues, false)
+}
+
+func (e *Enforcer) SelfUpdatePolicyModel(sec string, ptype string, oldRule, newRule []string) (bool, error) {
+	return e.updatePolicyWithoutNotify(sec, ptype, oldRule, newRule, false)
+}
+
+func (e *Enforcer) SelfUpdatePoliciesModel(sec string, ptype string, oldRules, newRules [][]string) (bool, error) {
+	return e.updatePoliciesWithoutNotify(sec, ptype, oldRules, newRules, false)
 }
