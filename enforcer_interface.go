@@ -100,6 +100,12 @@ type IEnforcer interface {
 	GetPermissionsForUserInDomain(user string, domain string) [][]string
 	AddRoleForUserInDomain(user string, role string, domain string) (bool, error)
 	DeleteRoleForUserInDomain(user string, role string, domain string) (bool, error)
+	GetAllUsersByDomain(domain string) []string
+	DeleteRolesForUserInDomain(user string, domain string) (bool, error)
+	DeleteAllUsersByDomain(domain string) (bool, error)
+	DeleteDomains(domains ...string) (bool, error)
+	GetAllDomains() ([]string, error)
+	GetAllRolesByDomain(domain string) []string
 
 	/* RBAC API with domains and context */
 	AddRoleForUserInDomainCtx(ctx context.Context, user string, role string, domain string) (bool, error)
